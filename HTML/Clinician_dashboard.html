@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinican Dashboard</title>
+    <link rel="stylesheet" href="../CSS/Clinician_dashboard.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">Clinican Dashboard</div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../about-us.html">About Us</a></li>
+                <li><a href="../contact.html">Contact Us</a></li>
+                <li><button onclick="logout()">Logout</button></li>
+            </ul>
+            <div class="mobile-btns">
+                <div class="hamburger" id="hamburger">
+            ☰
+        </div>
+                <div class="sidebar-btn" id="sidebarBtn" onclick="toggleSidebar()">&#9776; Menu</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN WRAPPER -->
+    <div class="main-wrapper">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-title">Menu</div>
+            <button class="sidebar-link active" onclick="showPage('appointment', this); closeSidebar()">
+                &#128197; Appointment
+            </button>
+            <button class="sidebar-link" onclick="showPage('patients', this); closeSidebar()">
+                &#128203; Patient List
+            </button>
+            <button class="sidebar-link" onclick="showPage('feedback', this); closeSidebar(); loadPatientFeedback();">
+                &#128202; Feedback
+            </button>
+        </aside>
+    <!-- SIDEBAR OVERLAY -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+        <!-- PAGE CONTENT -->
+        <div class="page-content">
+
+            <!-- PAGE 1: Appointment Calendar -->
+            <div class="page active" id="page-appointment">
+                <div class="single-container">
+                    <div class="appointment-panel">
+                        <div class="cal-header">
+                            <h3>Appointment Calendar</h3>
+                            <div class="cal-nav">
+                                <button class="cal-btn" onclick="changeMonth(-1)">&#8592;</button>
+                                <span id="monthLabel" class="month-label"></span>
+                                <button class="cal-btn" onclick="changeMonth(1)">&#8594;</button>
+                            </div>
+                        </div>
+                        <div id="calendar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 2: Patient List + Patient File -->
+            <div class="page" id="page-patients">
+                <div class="two-col-container">
+
+                    <!-- Patient List -->
+                    <div class="patient-list">
+                        <h3>Patient List</h3>
+                        <ul id="patients"></ul>
+                    </div>
+
+                    <!-- Patient File -->
+                    <div class="patient-file" id="patientDetails">
+                        <h3>Patient File</h3>
+                        <p class="placeholder">Select a patient from the list</p>
+                    </div>
+
+                </div>
+
+                <!-- ADD APPOINTMENT FORM -->
+                <div class="add-form-panel" id="addApptPanel" style="display:none;">
+                    <h3>📅 Add Appointment</h3>
+                    <div class="add-form-grid">
+                        <div class="add-form-group">
+                            <label>Doctor</label>
+                            <select id="apptDoctor"></select>
+                        </div>
+                        <div class="add-form-group">
+                            <label>Treatment</label>
+                            <select id="apptTreatment">
+                                <option value="">Select treatment</option>
+                            </select>
+                        </div>
+                        <div class="add-form-group">
+                            <label>Date</label>
+                            <input type="date" id="apptDate" />
+                        </div>
+                        <div class="add-form-group">
+                            <label>Status</label>
+                            <select id="apptStatus">
+                                <option value="Scheduled">Scheduled</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="add-form-group" style="grid-column:1/-1;">
+                            <label>Notes (optional)</label>
+                            <textarea id="apptNotes" rows="2" placeholder="Any notes…"></textarea>
+                        </div>
+                    </div>
+                    <button onclick="submitAppointment()" class="add-btn">➕ Add Appointment</button>
+                    <div id="apptMsg" style="display:none;margin-top:10px;padding:10px;border-radius:8px;font-size:13px;"></div>
+                </div>
+
+                <!-- ADD NOTES FORM -->
+                <div class="add-form-panel" id="addNotePanel" style="display:none;">
+                    <h3>💬 Add Clinician Note</h3>
+                    <div class="add-form-grid">
+                        <div class="add-form-group">
+                            <label>Category</label>
+                            <select id="noteCategory">
+                                <option>General</option>
+                                <option>Medication</option>
+                                <option>Diet</option>
+                                <option>Exercise</option>
+                                <option>Follow-up</option>
+                                <option>Emergency</option>
+                            </select>
+                        </div>
+                        <div class="add-form-group">
+                            <label>Priority</label>
+                            <select id="notePriority">
+                                <option>Normal</option>
+                                <option>High</option>
+                                <option>Critical</option>
+                            </select>
+                        </div>
+                        <div class="add-form-group" style="grid-column:1/-1;">
+                            <label>Note</label>
+                            <textarea id="noteText" rows="3" placeholder="Write your clinical note here…"></textarea>
+                        </div>
+                    </div>
+                    <button onclick="submitNote()" class="add-btn add-btn-note">📝 Add Note</button>
+                    <div id="noteMsg" style="display:none;margin-top:10px;padding:10px;border-radius:8px;font-size:13px;"></div>
+                </div>
+            </div>
+
+            <!-- PAGE 3: Feedback -->
+            <div class="page" id="page-feedback">
+                <div class="feedback-container">
+
+                    <!-- Chart -->
+                    <div class="feedback">
+                        <h3>Patient Feedback</h3>
+                        <div class="chart">
+                            <div class="circle">
+                                <span id="percentage">—</span>
+                            </div>
+                        </div>
+                        <div class="legend">
+                            <p>&#x1F7E2; Good</p>
+                            <p>&#x1F535; Average</p>
+                            <p>&#x1F7E0; Poor</p>
+                            <p>&#x1F534; Very Poor</p>
+                        </div>
+                    </div>
+
+                    <!-- Patient Feedback with Reply -->
+                    <div class="feedback comments-panel">
+                        <h3>Patient Feedback &amp; Replies</h3>
+                        <div id="patientFeedbackList">
+                            <p style="color:#999;font-size:14px;">Loading…</p>
+                        </div>
+                    </div>
+
+                    <!-- Old comments panel -->
+                    <div class="feedback comments-panel">
+                        <h3>All Feedback Comments</h3>
+                        <div id="commentsList">
+                            <p style="color:#999; font-size:14px;">Loading...</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- DATE MODAL -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 id="modalTitle">Appointments</h3>
+                <button class="close-btn" onclick="closeModal()">&#10005;</button>
+            </div>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script src="/JS/Clinician_dashboard.js"></script>
+</body>
+</html><!-- Auth guard injected -->
+<script>
+(function(){
+  const t = localStorage.getItem('h404_token');
+  const r = localStorage.getItem('h404_role');
+  if(!t || r !== 'clinician') window.location.href = '/login';
+  // Show name
+  const n = localStorage.getItem('h404_name');
+  document.addEventListener('DOMContentLoaded', function(){
+    const logo = document.querySelector('.logo');
+    if(logo) logo.textContent = 'Clinician Dashboard';
+  });
+})();
+function logout(){ localStorage.clear(); window.location.href='/login'; }
+</script>

@@ -1,0 +1,185 @@
+\<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="/CSS/admin.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">404</div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About Us</a></li>
+        <li><a href="/contact">Contact Us</a></li>
+        <li><span id="adminName" style="font-weight:600;color:#252b61;font-size:14px;"></span></li>
+        <li><a href="#" onclick="adminLogout()" style="color:#ef4444;font-weight:600;font-size:14px;">Logout</a></li>
+      </ul>
+      <div class="hamburger" id="hamburger">☰</div>
+    </div>
+  </nav>
+
+  <!-- DASHBOARD -->
+  <main class="dashboard">
+    <h1>Admin Dashboard</h1>
+
+    <!-- Stat cards -->
+    <section class="stats">
+      <div class="stat-card users">
+        <span>Total Users</span>
+        <h2>256</h2>
+      </div>
+      <div class="stat-card patient">
+        <span>Patient Accounts</span>
+        <h2>180</h2>
+      </div>
+      <div class="stat-card clinician">
+        <span>Clinician Accounts</span>
+        <h2>64</h2>
+      </div>
+    </section>
+
+    <!-- Manage Users table -->
+    <section class="card">
+      <div class="card-header">
+        <h3>Manage Users</h3>
+        <div class="actions">
+          <button class="btn-add" id="btnAdd">+ Add User</button>
+          <button class="btn-remove" id="btnRemove">Remove</button>
+        </div>
+      </div>
+
+      <input class="search" type="text" placeholder="Search by name, role, ID" />
+
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </section>
+
+    <div id="customAlert" class="alert-overlay">
+      <div class="alert-box">
+        <h3>Confirm Delete</h3>
+        <p id="alertMessage">Are you sure?</p>
+        <div class="alert-actions">
+          <button class="cancel-btn">Cancel</button>
+          <button class="ok-btn">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom panels -->
+    <section class="bottom-panels">
+      <div class="card">
+        <h3>System Information</h3>
+        <ul class="info-list">
+          <li id="sysUptime">⏳ Loading...</li>
+          <li id="sysServer">⏳ Loading...</li>
+          <li id="sysDb">⏳ Loading...</li>
+          <li id="sysBackup">⏳ Loading...</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>System Load</h3>
+        <div class="load-wrapper">
+          <div class="load-item">
+            <div class="circle cpu" data-value="70"><span>0%</span></div>
+            <p>CPU</p>
+          </div>
+          <div class="load-item">
+            <div class="circle ram" data-value="55"><span>0%</span></div>
+            <p>RAM</p>
+          </div>
+          <div class="load-item">
+            <div class="circle storage" data-value="80"><span>0%</span></div>
+            <p>Storage</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Confirm Add User popup -->
+  <div class="modal-overlay" id="confirmAddUser">
+    <div class="confirm-box">
+      <h3>Add New User</h3>
+      <p>Do you want to add a new user?</p>
+      <div class="confirm-actions">
+        <button class="btn-cancel" id="cancelConfirm">Cancel</button>
+        <button class="btn-add"    id="confirmContinue">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add / Edit User modal -->
+  <div class="modal-overlay" id="addUserModal">
+    <div class="modal">
+      <h3>Add New User</h3>
+
+      <form class="modal-form">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" placeholder="Enter full name" required />
+        </div>
+        <div class="form-group" id="emailGroup">
+          <label>Email</label>
+          <input type="email" placeholder="Enter email" required />
+        </div>
+        <div class="form-group" id="passwordGroup">
+          <label>Password</label>
+          <input type="password" id="userPassword" placeholder="Enter password" required />
+        </div>
+        <div class="form-group">
+          <label>Role</label>
+          <select required>
+            <option value="">Select role</option>
+            <option value="admin">Admin</option>
+            <option value="patient">Patient</option>
+            <option value="clinician">Clinician</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select>
+            <option value="Active">Active</option>
+            <option value="Disabled">Disabled</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel">Cancel</button>
+          <button type="submit" class="btn-add">Add User</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/JS/admin.js"></script>
+  <script>
+    (function(){
+      const t = localStorage.getItem('h404_token');
+      const r = localStorage.getItem('h404_role');
+      if(!t || r !== 'admin') window.location.href = '/login';
+    })();
+    document.addEventListener('DOMContentLoaded', function(){
+      const n = localStorage.getItem('h404_name');
+      const el = document.getElementById('adminName');
+      if(el && n) el.textContent = '👤 ' + n;
+    });
+    function adminLogout(){ localStorage.clear(); window.location.href='/login'; }
+  </script>
+</body>
+</html>

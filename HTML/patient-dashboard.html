@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Patient Dashboard — Hospital 404</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/CSS/patient-dashboard.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">404</div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About Us</a></li>
+        <li><a href="/contact">Contact Us</a></li>
+        <li><span id="navName" style="font-weight:600;color:#252b61;font-size:14px;"></span></li>
+        <li><a href="#" onclick="logout()" style="color:#ef4444;font-size:14px;font-weight:600;">Logout</a></li>
+      </ul>
+      <div class="hamburger" id="hamburger">☰</div>
+    </div>
+  </nav>
+
+  <!-- DASHBOARD -->
+  <main class="dashboard">
+    <div class="dash-header">
+      <h1>Patient Dashboard</h1>
+      <p class="welcome-msg" id="welcomeMsg">Welcome back!</p>
+    </div>
+
+    <!-- STAT CARDS -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div>
+          <span class="stat-label">Appointments</span>
+          <h2 id="statAppts">—</h2>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💊</div>
+        <div>
+          <span class="stat-label">Completed</span>
+          <h2 id="statCompleted">—</h2>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🩺</div>
+        <div>
+          <span class="stat-label">Clinician Notes</span>
+          <h2 id="statNotes">—</h2>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">❤️</div>
+        <div>
+          <span class="stat-label">Heart Rate</span>
+          <h2 id="statHR">—</h2>
+        </div>
+      </div>
+    </section>
+
+    <!-- MAIN GRID -->
+    <section class="main-grid">
+
+      <!-- APPOINTMENTS -->
+      <div class="card">
+        <div class="card-header">
+          <h3>My Appointments</h3>
+        </div>
+        <div id="appointmentsList" class="appt-list">
+          <p class="placeholder-text">Loading appointments…</p>
+        </div>
+      </div>
+
+      <!-- VITALS CHART -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Heart Rate History</h3>
+        </div>
+        <canvas id="vitalsChart" height="200"></canvas>
+      </div>
+
+      <!-- CLINICIAN NOTES -->
+      <div class="card wide">
+        <div class="card-header">
+          <h3>💬 Clinician Notes</h3>
+          <span class="badge" id="noteBadge">0</span>
+        </div>
+        <div id="notesFeed" class="notes-feed">
+          <p class="placeholder-text">Loading notes…</p>
+        </div>
+      </div>
+
+      <!-- SUBMIT FEEDBACK -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Submit Feedback</h3>
+        </div>
+        <form id="feedbackForm" class="feedback-form">
+          <div class="form-group">
+            <label>Doctor</label>
+            <select id="fbDoctor" required></select>
+          </div>
+          <div class="form-group">
+            <label>Rating</label>
+            <select id="fbRating" required>
+              <option value="">Select</option>
+              <option>Good</option>
+              <option>Average</option>
+              <option>Poor</option>
+              <option>Very Poor</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Comments</label>
+            <textarea id="fbComment" rows="3" placeholder="Your feedback…"></textarea>
+          </div>
+          <button type="submit" class="btn-submit">Submit Feedback</button>
+        </form>
+        <div id="fbMsg" style="display:none;margin-top:10px;padding:10px;border-radius:8px;font-size:13px;"></div>
+      </div>
+
+      <!-- MY FEEDBACK HISTORY -->
+      <div class="card wide">
+        <div class="card-header">
+          <h3>📋 My Feedback & Clinician Replies</h3>
+        </div>
+        <div id="feedbackHistory" class="notes-feed">
+          <p class="placeholder-text">Loading feedback history…</p>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <script src="/JS/patient-dashboard.js"></script>
+</body>
+</html>

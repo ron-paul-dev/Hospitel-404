@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register — Hospital 404</title>
+  <link rel="stylesheet" href="../CSS/auth.css" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="auth-wrapper">
+    <div class="auth-left">
+      <div class="auth-logo" onclick="location.href='/'">404</div>
+      <div class="auth-tagline">
+        <h2>Join Hospital 404</h2>
+        <p>Create your account and get access to world-class healthcare services.</p>
+      </div>
+    </div>
+
+    <div class="auth-right">
+      <div class="auth-card wide">
+        <h1>Create Account</h1>
+        <p class="auth-sub">Register as a Patient or Clinician</p>
+
+        <div class="tab-row">
+          <button class="tab active" data-type="patient" onclick="switchType('patient',this)">Patient</button>
+          <button class="tab" data-type="clinician" onclick="switchType('clinician',this)">Clinician</button>
+        </div>
+
+        <div id="errorBox"   class="error-box"   style="display:none"></div>
+        <div id="successBox" class="success-box" style="display:none"></div>
+
+        <!-- PATIENT FORM -->
+        <form id="patientForm" onsubmit="register(event,'patient')">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input type="text" name="name" placeholder="John Doe" required />
+            </div>
+            <div class="form-group">
+              <label>Email *</label>
+              <input type="email" name="email" placeholder="john@mail.com" required />
+            </div>
+            <div class="form-group">
+              <label>Password *</label>
+              <input type="password" name="password" placeholder="Min 6 characters" required minlength="6" />
+            </div>
+            <div class="form-group">
+              <label>Age</label>
+              <input type="number" name="age" placeholder="25" min="1" max="120" />
+            </div>
+            <div class="form-group">
+              <label>Gender</label>
+              <select name="gender">
+                <option value="">Select</option>
+                <option>Male</option><option>Female</option><option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Date of Birth</label>
+              <input type="date" name="dob" />
+            </div>
+            <div class="form-group">
+              <label>Phone</label>
+              <input type="tel" name="phone" placeholder="+44 7700 900000" />
+            </div>
+            <div class="form-group">
+              <label>Blood Group</label>
+              <select name="blood_group">
+                <option value="">Select</option>
+                <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+                <option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn-primary">Register as Patient</button>
+        </form>
+
+        <!-- CLINICIAN FORM -->
+        <form id="clinicianForm" style="display:none" onsubmit="register(event,'clinician')">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input type="text" name="name" placeholder="Dr. Smith" required />
+            </div>
+            <div class="form-group">
+              <label>Email *</label>
+              <input type="email" name="email" placeholder="smith@hospital404.com" required />
+            </div>
+            <div class="form-group">
+              <label>Password *</label>
+              <input type="password" name="password" placeholder="Min 6 characters" required minlength="6" />
+            </div>
+            <div class="form-group">
+              <label>Specialization</label>
+              <select name="specialization">
+                <option value="">Select</option>
+                <option>General Medicine</option><option>Cardiology</option>
+                <option>Neurology</option><option>Orthopaedics</option>
+                <option>ENT</option><option>Dermatology</option>
+                <option>Endocrinology</option><option>Pulmonology</option>
+                <option>Paediatrics</option><option>Oncology</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Phone</label>
+              <input type="tel" name="phone" placeholder="+44 7700 900000" />
+            </div>
+          </div>
+          <button type="submit" class="btn-primary">Register as Clinician</button>
+        </form>
+
+        <p class="auth-link">Already have an account? <a href="/login">Sign in</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = '/api/auth';
+
+    function switchType(type, btn) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('patientForm').style.display   = type === 'patient'   ? 'block' : 'none';
+      document.getElementById('clinicianForm').style.display = type === 'clinician' ? 'block' : 'none';
+      document.getElementById('errorBox').style.display   = 'none';
+      document.getElementById('successBox').style.display = 'none';
+    }
+
+    async function register(e, type) {
+      e.preventDefault();
+      const form    = e.target;
+      const errBox  = document.getElementById('errorBox');
+      const sucBox  = document.getElementById('successBox');
+      const btn     = form.querySelector('button[type=submit]');
+
+      errBox.style.display = sucBox.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Registering…';
+
+      const data = {};
+      new FormData(form).forEach((v, k) => { if (v) data[k] = v; });
+
+      try {
+        const res  = await fetch(`${API}/register/${type}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error);
+        sucBox.textContent   = '✅ Registration successful! Redirecting to login…';
+        sucBox.style.display = 'block';
+        form.reset();
+        setTimeout(() => location.href = '/login', 2000);
+      } catch (err) {
+        errBox.textContent   = err.message;
+        errBox.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = type === 'patient' ? 'Register as Patient' : 'Register as Clinician';
+      }
+    }
+  </script>
+</body>
+</html>

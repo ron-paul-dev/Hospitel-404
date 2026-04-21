@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — Hospital 404</title>
+  <link rel="stylesheet" href="../CSS/auth.css" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="auth-wrapper">
+    <!-- Left panel -->
+    <div class="auth-left">
+      <div class="auth-logo" onclick="location.href='/'">404</div>
+      <div class="auth-tagline">
+        <h2>Your Health,<br/>Our Priority.</h2>
+        <p>Access your health records, appointments, and more — securely from anywhere.</p>
+      </div>
+      <div class="auth-roles">
+        <div class="role-chip"><span>🏥</span> Patients</div>
+        <div class="role-chip"><span>🩺</span> Clinicians</div>
+        <div class="role-chip"><span>⚙️</span> Admins</div>
+      </div>
+    </div>
+
+    <!-- Right panel -->
+    <div class="auth-right">
+      <div class="auth-card">
+        <h1>Welcome Back</h1>
+        <p class="auth-sub">Sign in to your Hospital 404 account</p>
+
+        <div class="tab-row">
+          <button class="tab active" data-role="patient">Patient</button>
+          <button class="tab" data-role="clinician">Clinician</button>
+          <button class="tab" data-role="admin">Admin</button>
+        </div>
+
+        <div id="errorBox" class="error-box" style="display:none"></div>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="email" placeholder="you@example.com" required />
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="password" placeholder="••••••••" required />
+            <span class="pw-toggle" onclick="togglePw()">👁</span>
+          </div>
+          <button type="submit" class="btn-primary" id="loginBtn">Sign In</button>
+        </form>
+
+        <p class="auth-link">Don't have an account? <a href="/register">Register here</a></p>
+        
+
+        
+        <!-- Quick demo hint -->
+        <div class="demo-hint">
+          <b>Demo passwords:</b><br/>
+          admin@hospital404.com / <i>password</i> · john@mail.com / <i>password</i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = '/api/auth';
+    let selectedRole = 'patient';
+
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        selectedRole = tab.dataset.role;
+      });
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const email    = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const btn      = document.getElementById('loginBtn');
+      const errBox   = document.getElementById('errorBox');
+
+      btn.textContent = 'Signing in…';
+      btn.disabled = true;
+      errBox.style.display = 'none';
+
+      try {
+        const res  = await fetch(`${API}/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Login failed');
+
+        // Validate role matches selected tab
+        if (data.role !== selectedRole) {
+          throw new Error(`This account is registered as "${data.role}". Please select the correct tab.`);
+        }
+
+        localStorage.setItem('h404_token', data.token);
+        localStorage.setItem('h404_role',  data.role);
+        localStorage.setItem('h404_name',  data.name);
+
+        const routes = { admin: '/admin-dashboard', clinician: '/clinician-dashboard', patient: '/patient-dashboard' };
+        window.location.href = routes[data.role] || '/';
+      } catch (err) {
+        errBox.textContent    = err.message;
+        errBox.style.display  = 'block';
+        btn.textContent = 'Sign In';
+        btn.disabled = false;
+      }
+    });
+
+    function togglePw() {
+      const pw = document.getElementById('password');
+      pw.type = pw.type === 'password' ? 'text' : 'password';
+      const API = 'http://localhost:3000/api/auth';
+    }
+  </script>
+</body>
+</html>

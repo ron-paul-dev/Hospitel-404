@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital 404</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/CSS/index.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">404</div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/contact">Contact Us</a></li>
+                <li id="navAuthArea">
+                  <a href="/login" class="login-link">Login
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path d="M12 12c2.7 0 4.5-2 4.5-4.5S14.7 3 12 3 7.5 5 7.5 7.5 9.3 12 12 12zm0 2c-3 0-9 1.5-9 4.5V21h18v-2.5c0-3-6-4.5-9-4.5z" fill="currentColor"/>
+                    </svg>
+                  </a>
+                </li>
+            </ul>
+            <div class="hamburger" id="hamburger">☰</div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>404 HOSPITALS</h1>
+            <div class="hero-btns">
+              <button class="btn" onclick="location.href='/login'">Sign In</button>
+              <button class="btn btn-outline" onclick="location.href='/register'">Register</button>
+            </div>
+        </div>
+        <div class="features">
+            <div class="feature">
+                <div class="icon pink">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                        <path d="M9 15l2 2 4-4"></path>
+                    </svg>
+                </div>
+                <p>Smart Appointment Management</p>
+            </div>
+            <div class="feature">
+                <div class="icon green">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="4" width="20" height="14" rx="2"></rect>
+                        <line x1="2" y1="18" x2="22" y2="18"></line>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="10" y1="11" x2="14" y2="11"></line>
+                    </svg>
+                </div>
+                <p>Remote Healthcare Access</p>
+            </div>
+        </div>
+        <div class="doctor">
+          <div class="doctor-placeholder">🏥</div>
+        </div>
+    </section>
+
+    <section class="glass-features">
+        <div class="glass-feature-card">
+            <div class="glass-card-content">
+                <h3>Time-based <br> Health Data Tracking</h3>
+                <p>View health metrics organized chronologically.</p>
+            </div>
+        </div>
+        <div class="glass-feature-card">
+            <div class="glass-card-content">
+                <h3>Health Data <br> Visualisation</h3>
+                <p>Interactive charts for all your health data.</p>
+            </div>
+        </div>
+        <div class="glass-feature-card">
+            <div class="glass-card-content">
+                <h3>Comparative <br> Health Reports</h3>
+                <p>Compare current data with previous periods.</p>
+            </div>
+        </div>
+        <div class="glass-feature-card">
+            <div class="glass-card-content">
+                <h3>Pressure Data <br> Heat Map</h3>
+                <p>Clear summaries of key health information.</p>
+            </div>
+        </div>
+    </section>
+
+    <script src="/JS/index.js"></script>
+    <script>
+      // Show dashboard link if logged in
+      const token = localStorage.getItem('h404_token');
+      const role  = localStorage.getItem('h404_role');
+      const name  = localStorage.getItem('h404_name');
+      if (token && role) {
+        const routes = { admin:'/admin-dashboard', clinician:'/clinician-dashboard', patient:'/patient-dashboard' };
+        document.getElementById('navAuthArea').innerHTML =
+          `<a href="${routes[role]}" class="login-link">👤 ${name}</a>`;
+      }
+    </script>
+</body>
+</html>
