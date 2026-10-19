@@ -2,6 +2,14 @@
 
 A hospital management web app I built with Node.js, Express and MySQL. It has three separate portals (patient, clinician and admin) behind a single login.
 
+![Home page](docs/screenshots/home.png)
+
+## Screenshots
+
+| Login | Admin dashboard |
+|-------|-----------------|
+| ![Login page](docs/screenshots/login.png) | ![Admin dashboard](docs/screenshots/admin-dashboard.png) |
+
 ## Features
 
 - One login for all three roles. Each dashboard checks the user's role from their token and redirects them if they're in the wrong place.
