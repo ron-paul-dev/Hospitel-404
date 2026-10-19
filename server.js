@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════
 //  HOSPITAL 404 — UNIFIED BACKEND SERVER
-//  npm install express mysql2 bcryptjs jsonwebtoken cors dotenv
-//  node server.js
+//  npm install
+//  npm start   (config via environment variables — see .env.example)
 // ═══════════════════════════════════════════════════════════
 
 const express    = require('express');
@@ -12,7 +12,8 @@ const cors       = require('cors');
 const path       = require('path');
 
 const app = express();
-const JWT_SECRET = 'hospital404_secret_2024';
+const JWT_SECRET = process.env.JWT_SECRET || 'dev-only-change-me';
+const PORT       = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -25,10 +26,10 @@ app.use('/FILES', express.static(path.join(__dirname, 'FILES')));
 
 // ── MySQL Pool ───────────────────────────────────────────────
 const db = mysql.createPool({
-  host:     'localhost',
-  user:     'root',
-  password: '1234',          // ← change to your MySQL password
-  database: 'hospital404',
+  host:     process.env.DB_HOST     || 'localhost',
+  user:     process.env.DB_USER     || 'root',
+  password: process.env.DB_PASSWORD || '',
+  database: process.env.DB_NAME     || 'hospital404',
   waitForConnections: true,
   connectionLimit: 10
 });
@@ -424,4 +425,4 @@ app.get('/about',   (req, res) => res.sendFile(path.join(__dirname, 'HTML', 'abo
 app.get('/contact', (req, res) => res.sendFile(path.join(__dirname, 'HTML', 'contact.html')));
 
 // ── Start ────────────────────────────────────────────────────
-app.listen(3000, () => console.log('🏥 Hospital 404 server running at http://localhost:3000'));
+app.listen(PORT, () => console.log(`🏥 Hospital 404 server running at http://localhost:${PORT}`));

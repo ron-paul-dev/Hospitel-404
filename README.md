@@ -1,160 +1,74 @@
-# 🏥 Hospital 404 — Full Stack Web Application
+# Hospital 404
 
-A complete hospital management system with Patient, Clinician, and Admin portals.
+A hospital management web app I built with Node.js, Express and MySQL. It has three separate portals (patient, clinician and admin) behind a single login.
 
----
+## Features
 
-## 📁 Project Structure
+- One login for all three roles. Each dashboard checks the user's role from their token and redirects them if they're in the wrong place.
+- Patients can see their appointments, vitals and notes from their clinician, and leave feedback.
+- Clinicians can see appointments and patients, read feedback, and add or remove notes on a patient.
+- Admins can add, edit, disable and delete users, and see some basic stats plus live CPU, RAM and storage usage of the server.
+- Passwords are hashed with bcrypt and sessions use JWTs that expire after 8 hours.
 
-```
-hospital404/
-├── server.js                    ← Node.js + Express backend (single server)
-├── package.json
-├── hospital404_db.sql           ← Run this FIRST to create the database
-│
-├── HTML/
-│   ├── index.html               ← Landing page
-│   ├── login.html               ← Login (Patient / Clinician / Admin)
-│   ├── register.html            ← Register (Patient / Clinician)
-│   ├── patient-dashboard.html   ← Patient portal
-│   ├── Clinician_dashboard.html ← Clinician portal
-│   └── admin.html               ← Admin portal
-│
-├── CSS/
-│   ├── auth.css                 ← Login + Register styles
-│   ├── index.css                ← Landing page styles
-│   ├── patient-dashboard.css
-│   ├── Clinician_dashboard.css
-│   └── admin.css
-│
-├── JS/
-│   ├── index.js
-│   ├── patient-dashboard.js
-│   ├── Clinician_dashboard.js
-│   ├── admin.js
-│   └── comments.js
-│
-└── FILES/
-    ├── card1.png – card4.png    ← Feature card images
-```
+## Built with
 
----
+- Frontend: HTML, CSS, plain JavaScript, Chart.js
+- Backend: Node.js, Express
+- Database: MySQL (mysql2)
+- Auth: jsonwebtoken, bcryptjs
 
-## 🚀 Setup Instructions
+## Running it locally
 
-### Step 1 — Database Setup
-
-Open MySQL and run:
-```sql
-SOURCE hospital404_db.sql;
-```
-
-Or via terminal:
-```bash
-mysql -u root -p < hospital404_db.sql
-```
-
-### Step 2 — Configure MySQL password
-
-Open `server.js` and update line ~25:
-```js
-password: '',   // ← put your MySQL root password here
-```
-
-### Step 3 — Install dependencies
+You'll need Node.js 20 or newer and MySQL.
 
 ```bash
 npm install
+mysql -u root -p < hospital404_db.sql
+cp .env.example .env      # then put your MySQL password and a JWT secret in it
+node --env-file=.env server.js
 ```
 
-### Step 4 — Start the server
+Then go to http://localhost:3000.
 
-```bash
-node server.js
-# or for auto-reload during development:
-npx nodemon server.js
+The SQL file adds some test accounts, all with the password `password`:
+
+- Admin: admin@hospital404.com
+- Clinician: smith@hospital404.com
+- Patient: john@mail.com
+
+## Project layout
+
+```
+server.js            Express server, API routes and auth
+hospital404_db.sql   Database schema and test data
+HTML/                Pages
+CSS/                 Styles
+JS/                  Front-end scripts
+FILES/               Images
 ```
 
-### Step 5 — Open in browser
+## API
 
-```
-http://localhost:3000
-```
+Auth (public)
+- POST /api/auth/login
+- POST /api/auth/register/patient
+- POST /api/auth/register/clinician
 
----
+Admin
+- GET /api/stats, GET /api/system
+- GET, POST /api/users
+- PUT, DELETE /api/users/:id
+- PATCH /api/users/:id/disable
 
-## 🔐 Demo Login Credentials
+Clinician
+- GET /api/appointments, /api/patients, /api/feedback
+- GET, POST /api/comments/:ref
+- DELETE /api/comments/:ref/:id
 
-All seed accounts use the password: **`password`**
+Patient
+- GET /api/my/appointments, /api/my/vitals, /api/my/comments
+- POST /api/my/feedback
 
-| Role      | Email                        |
-|-----------|------------------------------|
-| Admin     | admin@hospital404.com        |
-| Clinician | smith@hospital404.com        |
-| Clinician | lee@hospital404.com          |
-| Patient   | john@mail.com                |
-| Patient   | emma@mail.com                |
+## Testing
 
-> After registering a new account, use the actual password you set.
-
----
-
-## 🔁 Routes & API
-
-### Auth (Public)
-| Method | Route                         | Description           |
-|--------|-------------------------------|-----------------------|
-| POST   | /api/auth/login               | Login all roles       |
-| POST   | /api/auth/register/patient    | Register patient      |
-| POST   | /api/auth/register/clinician  | Register clinician    |
-
-### Admin (JWT required, role=admin)
-| Method | Route               | Description         |
-|--------|---------------------|---------------------|
-| GET    | /api/stats          | Dashboard stats     |
-| GET    | /api/users          | List all users      |
-| POST   | /api/users          | Add user            |
-| PUT    | /api/users/:id      | Edit user           |
-| PATCH  | /api/users/:id/disable | Toggle status    |
-| DELETE | /api/users/:id      | Delete user         |
-| GET    | /api/system         | CPU/RAM/Storage     |
-
-### Clinician (JWT required, role=clinician)
-| Method | Route                     | Description           |
-|--------|---------------------------|-----------------------|
-| GET    | /api/appointments         | All appointments      |
-| GET    | /api/patients             | All patients          |
-| GET    | /api/feedback             | All feedback          |
-| GET    | /api/comments/:ref        | Comments for patient  |
-| POST   | /api/comments/:ref        | Add comment           |
-| DELETE | /api/comments/:ref/:id    | Delete comment        |
-
-### Patient (JWT required, role=patient)
-| Method | Route                | Description             |
-|--------|----------------------|-------------------------|
-| GET    | /api/my/appointments | Own appointments        |
-| GET    | /api/my/vitals       | Own vitals              |
-| GET    | /api/my/comments     | Clinician notes for me  |
-| POST   | /api/my/feedback     | Submit feedback         |
-
----
-
-## 🛡️ Security
-
-- Passwords hashed with **bcryptjs**
-- Sessions managed via **JWT tokens** (8h expiry)
-- Role-based access: each dashboard checks token role and redirects if wrong
-- Tokens stored in `localStorage` under key `h404_token`
-
----
-
-## 🧰 Tech Stack
-
-| Layer     | Technology                  |
-|-----------|-----------------------------|
-| Frontend  | HTML5, CSS3, Vanilla JS     |
-| Backend   | Node.js + Express           |
-| Database  | MySQL (mysql2 driver)       |
-| Auth      | JWT + bcryptjs              |
-| Charts    | Chart.js (CDN)              |
-| Fonts     | Google Fonts (DM Sans, Space Grotesk) |
+I tested it manually with 30+ test cases across the three roles and ran an OWASP ZAP scan, which came back with no high-severity issues.
